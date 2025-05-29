@@ -2,7 +2,7 @@ from KdiseaseClassifier import logger
 from KdiseaseClassifier.pipeline.stage_1_data_ingestion import DataIngestionTrainingPipeline
 from KdiseaseClassifier.pipeline.stage_2_prepare_base_model import PrepareBaseModelTrainingPipeline
 from KdiseaseClassifier.pipeline.stage_3_model_training import ModelTrainingPipeline
-# from KdiseaseClassifier.pipeline.stage_04_model_evaluation import EvaluationPipeline
+from KdiseaseClassifier.pipeline.stage_4_evaluation import EvaluationPipeline
 
 
 
@@ -48,14 +48,14 @@ except Exception as e:
 
 
 
-# STAGE_NAME = "Evaluation stage"
-# try:
-#    logger.info(f"*******************")
-#    logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-#    model_evalution = EvaluationPipeline()
-#    model_evalution.main()
-#    logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-# except Exception as e:
-#         logger.exception(e)
-#         raise e
+STAGE_NAME = "Evaluation stage"
+try:
+   logger.info(f"*******************")
+   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+   model_evalution = EvaluationPipeline()
+   model_evalution.main()
+   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+        logger.exception(e)
+        raise e
 
