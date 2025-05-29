@@ -11,7 +11,7 @@ class PrepareBaseModel:
         self.config = config
 
     def get_base_model(self):
-        self.model = tf.keras.applications.resnet50.ResNet50(
+        self.model = tf.keras.applications.ResNet50(
             input_shape=tuple(self.config.params_image_size),
             weights=self.config.params_weights,
             include_top=self.config.params_include_top
@@ -19,7 +19,8 @@ class PrepareBaseModel:
         self.save_model(path=self.config.base_model_path, model=self.model)
 
     @staticmethod
-    def _prepare_full_model(model, classes, freeze_all, freeze_till, learning_rate):
+    def _prepare_full_model(model, freeze_all, freeze_till, learning_rate):
+        # Freezing layers
         if freeze_all:
             for layer in model.layers:
                 layer.trainable = False
@@ -27,20 +28,19 @@ class PrepareBaseModel:
             for layer in model.layers[:-freeze_till]:
                 layer.trainable = False
 
-        flatten_in = tf.keras.layers.GlobalAveragePooling2D()(model.output)
-        prediction = tf.keras.layers.Dense(
-            units=classes,
-            activation="softmax"
-        )(flatten_in)
+        # Classification Head for Binary Classification
+        x = tf.keras.layers.GlobalAveragePooling2D()(model.output)
+        x = tf.keras.layers.Dense(256, activation="relu")(x)
+        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dense(128, activation="relu")(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        output = tf.keras.layers.Dense(2, activation="softmax")(x)
 
-        full_model = tf.keras.models.Model(
-            inputs=model.input,
-            outputs=prediction
-        )
+        full_model = tf.keras.models.Model(inputs=model.input, outputs=output)
 
         full_model.compile(
-            optimizer=tf.keras.optimizers.SGD(learning_rate=learning_rate),
-            loss=tf.keras.losses.CategoricalCrossentropy(),  # CategoricalCrossentropy for one-hot labels
+            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+            loss=tf.keras.losses.CategoricalCrossentropy(),
             metrics=["accuracy"]
         )
 
@@ -50,7 +50,6 @@ class PrepareBaseModel:
     def update_base_model(self):
         self.full_model = self._prepare_full_model(
             model=self.model,
-            classes=self.config.params_classes,
             freeze_all=True,
             freeze_till=None,
             learning_rate=self.config.params_learning_rate
