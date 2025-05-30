@@ -36,13 +36,13 @@ stages:
         - 224
         - 3
         INCLUDE_TOP: false
-        LEARNING_RATE: 0.02
+        LEARNING_RATE: 0.001
         WEIGHTS: imagenet
     outs:
     - path: artifacts/prepare_base_model
       hash: md5
-      md5: c3c57a13478bb3b7a3ad2a2ce9915a0f.dir
-      size: 191976640
+      md5: 7162da549ffc5fefde9ce3e263bf84ef.dir
+      size: 191976544
       nfiles: 2
   training:
     cmd: python src/KdiseaseClassifier/pipeline/stage_3_model_training.py
@@ -54,8 +54,8 @@ stages:
       nfiles: 465
     - path: artifacts/prepare_base_model
       hash: md5
-      md5: c3c57a13478bb3b7a3ad2a2ce9915a0f.dir
-      size: 191976640
+      md5: 7162da549ffc5fefde9ce3e263bf84ef.dir
+      size: 191976544
       nfiles: 2
     - path: config/config.yaml
       hash: md5
@@ -69,7 +69,7 @@ stages:
       params.yaml:
         AUGMENTATION: true
         BATCH_SIZE: 16
-        EPOCHS: 2
+        EPOCHS: 10
         IMAGE_SIZE:
         - 224
         - 224
@@ -77,8 +77,8 @@ stages:
     outs:
     - path: artifacts/training/model.h5
       hash: md5
-      md5: 8bc11a006da6d20cc1b6642ced62c800
-      size: 101586056
+      md5: 75784bf3dda34372972cf980948e246b
+      size: 279030136
   evaluation:
     cmd: python src/KdiseaseClassifier/pipeline/stage_4_evaluation.py
     deps:
@@ -89,8 +89,8 @@ stages:
       nfiles: 465
     - path: artifacts/training/model.h5
       hash: md5
-      md5: 8bc11a006da6d20cc1b6642ced62c800
-      size: 101586056
+      md5: 75784bf3dda34372972cf980948e246b
+      size: 279030136
     - path: config/config.yaml
       hash: md5
       md5: 89af874b4bbe930c3bb732d34395cd7b
@@ -109,5 +109,5 @@ stages:
     outs:
     - path: scores.json
       hash: md5
-      md5: 7324dfb45ad47e63fdbd401dbb782f0b
+      md5: ac7737c73111f9fedd44299bc417852c
       size: 73

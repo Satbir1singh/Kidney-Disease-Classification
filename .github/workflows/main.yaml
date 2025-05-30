@@ -1,0 +1,38 @@
+name: CI/CD Render Deploy
+
+on:
+  push:
+    branches:
+      - main  # or your deployment branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Optional: Pull DVC data (if using DVC)
+      # - name: Setup DVC
+      #   run: |
+      #     pip install dvc[gs]  # or your remote
+      #     dvc pull
+
+      - name: Run Tests
+        run: |
+          pytest  # or your test command
+
+      - name: Deploy to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

@@ -50,8 +50,8 @@ class PrepareBaseModel:
     def update_base_model(self):
         self.full_model = self._prepare_full_model(
             model=self.model,
-            freeze_all=True,
-            freeze_till=None,
+            freeze_all=False,
+            freeze_till=100,
             learning_rate=self.config.params_learning_rate
         )
         self.save_model(path=self.config.updated_base_model_path, model=self.full_model)
