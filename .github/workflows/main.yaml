@@ -1,9 +1,9 @@
-name: CI/CD Render Deploy
+name: CI/CD Render Docker Deploy
 
 on:
   push:
     branches:
-      - main  # or your deployment branch
+      - main  # Triggers on push to main
 
 jobs:
   deploy:
@@ -23,16 +23,14 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Optional: Pull DVC data (if using DVC)
-      # - name: Setup DVC
-      #   run: |
-      #     pip install dvc[gs]  # or your remote
-      #     dvc pull
-
+      # Optional: Run tests
       - name: Run Tests
         run: |
-          pytest  # or your test command
+          pytest  # Change if you use another test runner
 
-      - name: Deploy to Render
+      #  Deploy to Render using Docker
+      - name: Trigger Render Deploy Hook
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+          curl -X POST $RENDER_DEPLOY_HOOK
